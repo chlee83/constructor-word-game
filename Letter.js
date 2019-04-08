@@ -11,6 +11,7 @@ var Letter = function(letter) {
     this.toString = function() {
 
         //if the guessed letter is true, return the letter
+        //if the guessed letter is false, return underscore
         if(this.guessedLetter === false) {
 
             return "_";
@@ -30,7 +31,6 @@ var Letter = function(letter) {
 
             this.guessedLetter = true;
 
-            guessedCorrect = true;
         } else {
             return false;
         }

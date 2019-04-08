@@ -33,7 +33,7 @@ function mainGame() {
         inquirer.prompt([
             {
                 type: "input",
-                message: "Guess a letter!",
+                message: "\n" +chosenWord.display() + "\n\nGuess a letter!",
                 name: "inputLetter"
             }
         ]).then(function(response) {
@@ -44,25 +44,25 @@ function mainGame() {
             // if the chosen word has no more blanks share good job and reset game
             if (!chosenWord.display().includes("_")) {
                 
-                console.log("\nGood Job!\n");
+                console.log("\nGood Job! You completed the word!\nThe word was: " + randomWord + "\n");
 
                 resetGame();
 
-            // else continue main game function to guess again
-            } else if (guessedCorrect) {
+            // if guessed correctly, continue main game function to guess again
+            } else if (randomWord.indexOf(response.inputLetter) > -1) {
 
-                console.log("Correct! \n" + chosenWord.display());
+                console.log("Correct! \n");
 
                 mainGame();
 
+            //if wrong guess then decrease guesses left and display info
             } else {
 
                 // decrease guesses left by 1
                 guessesLeft--;
 
-                console.log("\nIncorrect! \nGuessed Left: " + 
-                            guessesLeft + 
-                            "\n" + chosenWord.display() + "\n");
+                //show guesses left
+                console.log("\nIncorrect! \nGuessed Left: " + guessesLeft + "\n");
 
                 mainGame();
 
@@ -74,15 +74,17 @@ function mainGame() {
     } else {
 
         console.log("Sorry, you lost! The word was: " + randomWord + "\n");
+
         resetGame();
 
     }
 
 }
 
-//ask if user wants to replay game if so reset game to starting guesses and pick new random word
+// reset game function
 function resetGame() {
 
+    //ask if player wants to play again
     inquirer.prompt([
         {
             type: "list",
@@ -92,18 +94,20 @@ function resetGame() {
         }
     ]).then(function(res) {
 
+        //if yes, reset details, choose new word, and play again
         if (res.playAgain === "yes") {
 
             guessesLeft = 10;
 
             ranNum = Math.floor(Math.random() * gameWords.length);
-        
+            
             randomWord = gameWords[ranNum];
         
             chosenWord = new Word(randomWord);
         
             mainGame();
 
+        //if no, end game
         } else {
             return false;
         }
