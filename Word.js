@@ -2,43 +2,51 @@
 var Letter = require("./Letter");
 
 //constructor function for randomly selecting a word and storing it
-var Word = function (word) {
+var Word = function (response) {
 
-    this.word = word;
+    //grab the word for the game
+    this.gameWord = response;
 
     //empty array of letters for the word
-    this.letterArr = [];
+    this.lettersArr = [];
 
-    var letters = this.word.split("");
+    //split the letters of the word
+    var lettersOfWord = this.gameWord.split("");
 
     //create new Letter object from the word
-    for (var i = 0; i < letters.length; i++) {
+    for (var i = 0; i < lettersOfWord.length; i++) {
         
-        var letter = new Letter (letters[i]);
+        var letter = new Letter(lettersOfWord[i]);
         
-        this.letterArr.push(letter);
+        this.lettersArr.push(letter);
     }
 
-    this.showWord = function() {
+    //function to string the word by concatenating the letters
+    this.display = function() {
         
         var chosenWord = "";
 
-        for (var i = 0; i < this.letterArr.length; i++) {
+        //create word with all the letters
+        for (var i = 0; i < this.lettersArr.length; i++) {
 
-            var letter = this.letterArr[i];
+            var letter = this.lettersArr[i];
 
-            chosenWord = chosenWord.concat(letter + " ");
+            chosenWord += letter + " ";
+
         }
 
         return chosenWord;
     }
 
-    this.userGuess = function(input) {
+    //function to check each guessed letter
+    this.guess = function(input) {
 
-        for (var i = 0; i < this.letterArr.length; i++) {
+        //for all the letters in word, chcek the user's choice
+        for (var i = 0; i < this.lettersArr.length; i++) {
             
-            var letter = this.letterArr[i];
+            var letter = this.lettersArr[i];
             
+            //check letter using check function
             letter.check(input);
         }
     }

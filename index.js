@@ -1,9 +1,3 @@
-/*****************
- * letters are coming out as just objects and not displaying correctly
- * letters should display as underscores
- * 
- */
-
 //require Word from word.js file
 var Word = require("./Word");
 
@@ -11,14 +5,18 @@ var Word = require("./Word");
 var inquirer = require("inquirer");
 
 //array of words for the game
-var gameWords = ["Avengers", "Iron Man", "Snatch", "Spiderman", "Oceans Eleven", "Brave Heart", "Lion King", 
-                "Finding Nemo", "Aladdin", "Independence Day", "Men In Black", "Jumanji"]
+var gameWords = ["parrot", "eagle", "mongoose", "elephant", "mouse", 
+                "cat", "shark", "hamster", "whale", "giraffe", "cheetah", 
+                "snake", "flamingo"]
 
 //guesses left for player
 var guessesLeft = 10;
 
+var guessedCorrect = false;
+
 //choses a random number using array length
 var ranNum = Math.floor(Math.random() * gameWords.length);
+
 //choses a random word using ranNum
 var randomWord = gameWords[ranNum];
 
@@ -29,53 +27,87 @@ var chosenWord = new Word(randomWord);
 //main game function
 function mainGame() {
 
+    //if guesses left is greater than zero, ask user to guess a letter
     if (guessesLeft > 0) {
 
         inquirer.prompt([
             {
                 type: "input",
-                message: "Guesses Left: " + guessesLeft + 
-                        "\n" + chosenWord.showWord() + 
-                        "\nGuess a letter!",
+                message: "Guess a letter!",
                 name: "inputLetter"
             }
         ]).then(function(response) {
+            
+            // check letter in guess function
+            chosenWord.guess(response.inputLetter);
 
-            chosenWord.userGuess(response.inputLetter);
-
-            guessesLeft--;;
-
-            if (!chosenWord.showWord().includes("_")) {
+            // if the chosen word has no more blanks share good job and reset game
+            if (!chosenWord.display().includes("_")) {
                 
-                console.log("Good Job!");
+                console.log("\nGood Job!\n");
 
                 resetGame();
 
+            // else continue main game function to guess again
+            } else if (guessedCorrect) {
+
+                console.log("Correct! \n" + chosenWord.display());
+
+                mainGame();
+
             } else {
+
+                // decrease guesses left by 1
+                guessesLeft--;
+
+                console.log("\nIncorrect! \nGuessed Left: " + 
+                            guessesLeft + 
+                            "\n" + chosenWord.display() + "\n");
 
                 mainGame();
 
             }
+
         });
 
+    // else no more guesses left, reset game
     } else {
 
-        console.log("Sorry, you lost! The word was: " + chosenWord);
+        console.log("Sorry, you lost! The word was: " + randomWord + "\n");
         resetGame();
 
     }
 
-
 }
 
-//reset game to starting guesses and pick new word
+//ask if user wants to replay game if so reset game to starting guesses and pick new random word
 function resetGame() {
 
-    guessesLeft = 10;
+    inquirer.prompt([
+        {
+            type: "list",
+            message: "Play another game?",
+            name: "playAgain",
+            choices: ["yes", "no"]
+        }
+    ]).then(function(res) {
 
-    chosenWord = new Word(randomWord);
+        if (res.playAgain === "yes") {
 
-    mainGame();
+            guessesLeft = 10;
+
+            ranNum = Math.floor(Math.random() * gameWords.length);
+        
+            randomWord = gameWords[ranNum];
+        
+            chosenWord = new Word(randomWord);
+        
+            mainGame();
+
+        } else {
+            return false;
+        }
+    })
 
 }
 
